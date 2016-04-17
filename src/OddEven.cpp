@@ -38,7 +38,86 @@ struct oddevennode{
 
 };
 
-int * oddeven_sll(struct oddevennode *head){
+struct oddevennode* send_head_to_even(struct oddevennode*, int*);
+struct oddevennode* send_head_to_odd(struct oddevennode*, int*);
 
+int * oddeven_sll(struct oddevennode *head){
+	if (head==NULL)
 	return NULL;
+	else
+	{
+		oddevennode* odd_starting, *even_starting;
+		int* count_arr;
+		count_arr = (int*)malloc(sizeof(int) * 2);
+		count_arr[0] = 0;
+		count_arr[1] = 0;
+		if ((head->data) % 2 == 0)
+		{
+			odd_starting = send_head_to_even(head, count_arr);
+			if (odd_starting != NULL)
+			even_starting = send_head_to_odd(odd_starting, count_arr);
+		}
+		else
+		{
+			even_starting = send_head_to_odd(head, count_arr);
+			if (even_starting!=NULL)
+			odd_starting = send_head_to_even(even_starting, count_arr);
+		}
+		return count_arr;
+	}
+}
+struct oddevennode* send_head_to_even(struct oddevennode* head, int* count_arr)
+{
+	int flag = 0, even_count = 0;
+	struct oddevennode* present, *prev,*odd_starting=NULL;
+	if ((head->data) % 2 == 0)
+		even_count++;
+	present = head->next;
+	prev = head;
+	while (present)
+	{
+		if ((present->data) % 2 == 0)
+		{
+			prev->random = present;
+			prev = present;
+			even_count++;
+		}
+		else if (flag == 0 && ((present->data) % 2 != 0))
+		{
+			odd_starting = present;
+			flag = 1;
+		}
+		present = present->next;
+	}
+	prev->random = NULL;
+	count_arr[1] = even_count;
+	return odd_starting;
+}
+
+struct oddevennode* send_head_to_odd(struct oddevennode* odd_starting, int* count_arr)
+{
+	struct oddevennode* present, *prev,*even_starting=NULL;
+	int flag = 0, odd_count = 0;
+	if ((odd_starting->data) % 2 != 0)
+		odd_count++;
+	present = odd_starting->next;
+	prev = odd_starting;
+	while (present)
+	{
+		if ((present->data) % 2 != 0)
+		{
+			prev->random = present;
+			prev = present;
+			odd_count++;
+		}
+		else if (flag == 0 && ((present->data) % 2 == 0))
+		{
+			even_starting = present;
+			flag = 1;
+		}
+		present = present->next;
+	}
+	prev->random = NULL;
+	count_arr[0] = odd_count;
+	return even_starting;
 }
